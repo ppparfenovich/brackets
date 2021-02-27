@@ -1,42 +1,21 @@
 module.exports = function check(str, bracketsConfig) {
-  const openers = ["{", "[", "("];
-  const closers = ["}", "]", ")"];
-  const match = {
-    "}": "{",
-    "]": "[",
-    ")": "(",
-    "|": "|"
-  };
   
-  var lastOpener = [];
+  let arr = [];
+  let bracketsCheck = {};   //объект образцов скобок (key - открывающая, value - закрывающая)
 
-  for (el in str) {
-    if (openers.includes(str[el])) {
-      lastOpener.push(str[el]);
-    }
-    if (closers.includes(str[el])) {
-      const last = lastOpener.pop();
-      if (last !== match[str[el]]) {
-        return false;
-      }
+  for (let i = 0; i < bracketsConfig.length; i++) {   //формируем объект образцов
+    bracketsCheck[bracketsConfig[i][0]] = bracketsConfig[i][1];
+  }
+
+  arr.push(str.charAt(0));      // добавляем первый эл. строки
+
+  for(var i = 1; i < str.length; i += 1) {    // начинаем перебор со второго эл.
+    if(str.charAt(i) === bracketsCheck[arr[arr.length - 1]]) {    //если i эл. строки равен value ключа (i эл. строки) в объекте образцов
+      arr.pop();
+    } else {
+      arr.push(str.charAt(i)); 
     }
   }
-  return lastOpener.length == 0;
-  
-  
-  // let brackets = "[]{}()||"
-  // let arr = []
-
-  // for(let bracket of str) {
-  //   let bracketsIndex = brackets.indexOf(bracket)   //находим индекс скобки в brackets которая = текущей скобки из str
-
-  //   if(bracketsIndex % 2 === 0) {
-  //     arr.push(bracketsIndex + 1)   //добавляем в массив индекс закрывающей скобки для bracket из str
-  //   } else {
-  //     if(arr.length === 0 || arr.pop() !== bracketsIndex) {
-  //       return false;
-  //     }
-  //   }
-  // }
-  // return arr.length === 0
+  if (arr.length > 0) {return false;}
+  return true;
 }
